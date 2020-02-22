@@ -36,9 +36,8 @@ const Still = (props: StillProps) => (
     onOpen={props.onOpen}
     inDestinationPicker={props.inDestinationPicker}
     writingToJournal={props.writingToJournal}
-  >
-    <Kb.Box style={Styles.collapseStyles([rowStyles.itemBox, props.writingToJournal && rowStyles.opacity30])}>
-      <Kb.Box2 direction="horizontal" fullWidth={true}>
+    content={
+      <>
         <Filename
           path={props.path}
           type={Constants.pathTypeToTextType(props.type)}
@@ -51,8 +50,10 @@ const Still = (props: StillProps) => (
             style={{marginLeft: Styles.globalMargins.tiny, marginTop: Styles.globalMargins.xxtiny}}
           />
         )}
-      </Kb.Box2>
-      {props.uploadErrorRetry ? (
+      </>
+    }
+    status={
+      props.uploadErrorRetry ? (
         <Kb.Text type="BodySmallError">
           Upload has failed.{' '}
           <Kb.Text type="BodySmallError" onClick={props.uploadErrorRetry} underline={true}>
@@ -67,9 +68,9 @@ const Still = (props: StillProps) => (
         <Kb.Text type="BodySmall">Uploading ...</Kb.Text>
       ) : (
         props.type !== Types.PathType.Folder && <LastModifiedLine path={props.path} mode="row" />
-      )}
-    </Kb.Box>
-  </StillCommon>
+      )
+    }
+  />
 )
 
 export default Still

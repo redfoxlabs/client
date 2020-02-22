@@ -49,7 +49,6 @@ export const loadedFileContext = 'fs:loadedFileContext'
 export const loadedFilesTabBadge = 'fs:loadedFilesTabBadge'
 export const loadedPathInfo = 'fs:loadedPathInfo'
 export const move = 'fs:move'
-export const newFolderName = 'fs:newFolderName'
 export const newFolderRow = 'fs:newFolderRow'
 export const openAndUpload = 'fs:openAndUpload'
 export const openFilesFromWidget = 'fs:openFilesFromWidget'
@@ -69,6 +68,7 @@ export const setDebugLevel = 'fs:setDebugLevel'
 export const setDestinationPickerParentPath = 'fs:setDestinationPickerParentPath'
 export const setDirectMountDir = 'fs:setDirectMountDir'
 export const setDriverStatus = 'fs:setDriverStatus'
+export const setEditName = 'fs:setEditName'
 export const setFolderViewFilter = 'fs:setFolderViewFilter'
 export const setIncomingShareSource = 'fs:setIncomingShareSource'
 export const setLastPublicBannerClosedTlf = 'fs:setLastPublicBannerClosedTlf'
@@ -89,6 +89,7 @@ export const showIncomingShare = 'fs:showIncomingShare'
 export const showMoveOrCopy = 'fs:showMoveOrCopy'
 export const sortSetting = 'fs:sortSetting'
 export const startManualConflictResolution = 'fs:startManualConflictResolution'
+export const startRename = 'fs:startRename'
 export const subscribeNonPath = 'fs:subscribeNonPath'
 export const subscribePath = 'fs:subscribePath'
 export const tlfSyncConfigLoaded = 'fs:tlfSyncConfigLoaded'
@@ -117,7 +118,7 @@ type _DriverDisablePayload = void
 type _DriverDisablingPayload = void
 type _DriverEnablePayload = {readonly isRetry?: boolean | null}
 type _DriverKextPermissionErrorPayload = void
-type _EditSuccessPayload = {readonly editID: Types.EditID; readonly parentPath: Types.Path}
+type _EditSuccessPayload = {readonly editID: Types.EditID}
 type _FavoriteIgnoreErrorPayload = {readonly path: Types.Path; readonly error: Types.FsError}
 type _FavoriteIgnorePayload = {readonly path: Types.Path}
 type _FavoritesLoadPayload = void
@@ -167,7 +168,6 @@ type _LoadedFileContextPayload = {readonly path: Types.Path; readonly fileContex
 type _LoadedFilesTabBadgePayload = {readonly badge: RPCTypes.FilesTabBadge}
 type _LoadedPathInfoPayload = {readonly path: Types.Path; readonly pathInfo: Types.PathInfo}
 type _MovePayload = {readonly destinationParentPath: Types.Path}
-type _NewFolderNamePayload = {readonly editID: Types.EditID; readonly name: string}
 type _NewFolderRowPayload = {readonly parentPath: Types.Path}
 type _OpenAndUploadPayload = {readonly type: Types.OpenDialogType; readonly parentPath: Types.Path}
 type _OpenFilesFromWidgetPayload = {readonly path: Types.Path; readonly type: Types.PathType}
@@ -190,6 +190,7 @@ type _SetDebugLevelPayload = {readonly level: string}
 type _SetDestinationPickerParentPathPayload = {readonly index: number; readonly path: Types.Path}
 type _SetDirectMountDirPayload = {readonly directMountDir: string}
 type _SetDriverStatusPayload = {readonly driverStatus: Types.DriverStatus}
+type _SetEditNamePayload = {readonly editID: Types.EditID; readonly name: string}
 type _SetFolderViewFilterPayload = {readonly filter: string | null}
 type _SetIncomingShareSourcePayload = {readonly source: Types.LocalPath | Array<RPCTypes.IncomingShareItem>}
 type _SetLastPublicBannerClosedTlfPayload = {readonly tlf: string}
@@ -213,6 +214,7 @@ type _ShowIncomingSharePayload = {readonly initialDestinationParentPath: Types.P
 type _ShowMoveOrCopyPayload = {readonly initialDestinationParentPath: Types.Path}
 type _SortSettingPayload = {readonly path: Types.Path; readonly sortSetting: Types.SortSetting}
 type _StartManualConflictResolutionPayload = {readonly tlfPath: Types.Path}
+type _StartRenamePayload = {readonly path: Types.Path}
 type _SubscribeNonPathPayload = {readonly subscriptionID: string; readonly topic: RPCTypes.SubscriptionTopic}
 type _SubscribePathPayload = {
   readonly subscriptionID: string
@@ -394,10 +396,6 @@ export const createLoadedPathInfo = (payload: _LoadedPathInfoPayload): LoadedPat
   type: loadedPathInfo,
 })
 export const createMove = (payload: _MovePayload): MovePayload => ({payload, type: move})
-export const createNewFolderName = (payload: _NewFolderNamePayload): NewFolderNamePayload => ({
-  payload,
-  type: newFolderName,
-})
 export const createNewFolderRow = (payload: _NewFolderRowPayload): NewFolderRowPayload => ({
   payload,
   type: newFolderRow,
@@ -462,6 +460,10 @@ export const createSetDirectMountDir = (payload: _SetDirectMountDirPayload): Set
 export const createSetDriverStatus = (payload: _SetDriverStatusPayload): SetDriverStatusPayload => ({
   payload,
   type: setDriverStatus,
+})
+export const createSetEditName = (payload: _SetEditNamePayload): SetEditNamePayload => ({
+  payload,
+  type: setEditName,
 })
 export const createSetFolderViewFilter = (
   payload: _SetFolderViewFilterPayload
@@ -531,6 +533,10 @@ export const createSortSetting = (payload: _SortSettingPayload): SortSettingPayl
 export const createStartManualConflictResolution = (
   payload: _StartManualConflictResolutionPayload
 ): StartManualConflictResolutionPayload => ({payload, type: startManualConflictResolution})
+export const createStartRename = (payload: _StartRenamePayload): StartRenamePayload => ({
+  payload,
+  type: startRename,
+})
 export const createSubscribeNonPath = (payload: _SubscribeNonPathPayload): SubscribeNonPathPayload => ({
   payload,
   type: subscribeNonPath,
@@ -718,10 +724,6 @@ export type LoadedPathInfoPayload = {
   readonly type: typeof loadedPathInfo
 }
 export type MovePayload = {readonly payload: _MovePayload; readonly type: typeof move}
-export type NewFolderNamePayload = {
-  readonly payload: _NewFolderNamePayload
-  readonly type: typeof newFolderName
-}
 export type NewFolderRowPayload = {readonly payload: _NewFolderRowPayload; readonly type: typeof newFolderRow}
 export type OpenAndUploadPayload = {
   readonly payload: _OpenAndUploadPayload
@@ -792,6 +794,7 @@ export type SetDriverStatusPayload = {
   readonly payload: _SetDriverStatusPayload
   readonly type: typeof setDriverStatus
 }
+export type SetEditNamePayload = {readonly payload: _SetEditNamePayload; readonly type: typeof setEditName}
 export type SetFolderViewFilterPayload = {
   readonly payload: _SetFolderViewFilterPayload
   readonly type: typeof setFolderViewFilter
@@ -866,6 +869,7 @@ export type StartManualConflictResolutionPayload = {
   readonly payload: _StartManualConflictResolutionPayload
   readonly type: typeof startManualConflictResolution
 }
+export type StartRenamePayload = {readonly payload: _StartRenamePayload; readonly type: typeof startRename}
 export type SubscribeNonPathPayload = {
   readonly payload: _SubscribeNonPathPayload
   readonly type: typeof subscribeNonPath
@@ -958,7 +962,6 @@ export type Actions =
   | LoadedFilesTabBadgePayload
   | LoadedPathInfoPayload
   | MovePayload
-  | NewFolderNamePayload
   | NewFolderRowPayload
   | OpenAndUploadPayload
   | OpenFilesFromWidgetPayload
@@ -978,6 +981,7 @@ export type Actions =
   | SetDestinationPickerParentPathPayload
   | SetDirectMountDirPayload
   | SetDriverStatusPayload
+  | SetEditNamePayload
   | SetFolderViewFilterPayload
   | SetIncomingShareSourcePayload
   | SetLastPublicBannerClosedTlfPayload
@@ -998,6 +1002,7 @@ export type Actions =
   | ShowMoveOrCopyPayload
   | SortSettingPayload
   | StartManualConflictResolutionPayload
+  | StartRenamePayload
   | SubscribeNonPathPayload
   | SubscribePathPayload
   | TlfSyncConfigLoadedPayload
